@@ -255,7 +255,7 @@ websites. To see it in action:`
     return new Promise((resolve) => {
       CURRENT_DETECTION_TIMEOUT = setTimeout(() => {
         resolve(true)
-      }, 1000)
+      }, 2000)
       CURRENT_CALLBACK = resolve
 
       w.location = `http://${domain}${detectionPath}`
