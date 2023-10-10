@@ -263,7 +263,7 @@ websites. To see it in action:`
   }
 
   function isGoogleChrome() {
-    return navigator.userAgentData.brands.some(
+    return navigator.userAgentData && navigator.userAgentData.brands.some(
       b => b.brand == "Google Chrome" && parseInt(b.version) >= 75
     )
   }
